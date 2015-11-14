@@ -21,8 +21,8 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         tableView.delegate = self
         tableView.dataSource = self
-        self.tableView.estimatedRowHeight = 100
-        self.tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 100
+        tableView.rowHeight = UITableViewAutomaticDimension
         
         requestData()
     }
@@ -85,7 +85,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         let y = scrollView.contentOffset.y + scrollView.bounds.size.height - scrollView.contentInset.bottom
-        if !self.isLoading && y > scrollView.contentSize.height + 10{
+        if !self.isLoading && y > scrollView.contentSize.height + 10 {
             ++currentPage
             if currentPage > Response.sharedManager.allPages {
                 currentPage = 1
