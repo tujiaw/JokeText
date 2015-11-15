@@ -15,6 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     var currentPage = 1
     var isLoading = false
+    let refreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +24,9 @@ class ViewController: UIViewController {
         tableView.dataSource = self
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
+        
+        refreshControl.addTarget(self, action: "refreshData", forControlEvents: .ValueChanged)
+        tableView.addSubview(refreshControl)
         
         requestData()
     }
@@ -40,10 +44,11 @@ class ViewController: UIViewController {
     }
     
     func requestData() {
+        print("----------\(currentPage)")
         let request = JokeTextRequest(time: "2015-01-01", page: currentPage)
         isLoading = true
         Alamofire.request(.GET, request.url).responseJSON { response in
-            print(response.request)
+            print(response.request?.URLString)
             if response.result.isSuccess {
                 if let value = response.result.value {
                     Response.sharedManager.setData(value)
@@ -53,7 +58,13 @@ class ViewController: UIViewController {
                 response.result.error
             }
             self.isLoading = false
+            self.refreshControl.endRefreshing()
         }
+    }
+    
+    func refreshData() {
+        currentPage = 1
+        requestData()
     }
 }
 
@@ -84,8 +95,14 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
+        if self.isLoading {
+            return
+        }
+        
+        let space = CGFloat(10)
         let y = scrollView.contentOffset.y + scrollView.bounds.size.height - scrollView.contentInset.bottom
-        if !self.isLoading && y > scrollView.contentSize.height + 10 {
+        //print("y:\(y), height:\(scrollView.contentSize.height), table height:\(self.tableView.frame.height)")
+        if y > scrollView.contentSize.height + space {           // 滑到底部
             ++currentPage
             if currentPage > Response.sharedManager.allPages {
                 currentPage = 1
