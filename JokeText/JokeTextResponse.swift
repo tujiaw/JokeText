@@ -38,6 +38,10 @@ class Response {
         self.currentPage = bodyJson["currentPage"].int ?? 0
         self.maxResult = bodyJson["maxResult"].int ?? 0
         
+        if self.currentPage == 1 {
+            self.contentList = [JokeItem]()
+        }
+        
         if let contentList = json["showapi_res_body"]["contentlist"].array {
             for content in contentList {
                 guard let title = content["title"].string, let text = content["text"].string, let ct = content["ct"].string else {
