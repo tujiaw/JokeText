@@ -36,7 +36,7 @@ class JokeViewCell : UITableViewCell {
             make.top.equalTo(self.snp_top).offset(5)
             make.height.equalTo(titleLabel)
             make.left.equalTo(titleLabel.snp_right).offset(5)
-            make.width.equalTo(160)
+            make.width.equalTo(0)
             make.right.equalTo(self.snp_right).offset(-5)
         }
         

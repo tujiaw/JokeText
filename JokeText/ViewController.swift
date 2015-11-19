@@ -13,9 +13,7 @@ import SnapKit
 class ViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
-    var currentPage = 1
     var isLoading = false
-    let refreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,10 +22,6 @@ class ViewController: UIViewController {
         tableView.dataSource = self
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
-        
-        refreshControl.addTarget(self, action: "refreshData", forControlEvents: .ValueChanged)
-        tableView.addSubview(refreshControl)
-        
         requestData()
     }
 
@@ -44,34 +38,26 @@ class ViewController: UIViewController {
     }
     
     func requestData() {
-        print("----------\(currentPage)")
-        let request = JokeTextRequest(time: "2015-01-01", page: currentPage)
+        self.view.makeToastActivity()
+        let request = LaifuJokeRequest()
         isLoading = true
         Alamofire.request(.GET, request.url).responseJSON { response in
-            print(response.request?.URLString)
             if response.result.isSuccess {
                 if let value = response.result.value {
-                    Response.sharedManager.setData(value)
+                    LaifuResponse.sharedManager.setData(value)
                     self.tableView.reloadData()
                 }
-            } else {
-                response.result.error
             }
             self.isLoading = false
-            self.refreshControl.endRefreshing()
+            self.view.hideToastActivity()
         }
-    }
-    
-    func refreshData() {
-        currentPage = 1
-        requestData()
     }
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     internal func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Response.sharedManager.contentList.count
+        return LaifuResponse.sharedManager.list.count
     }
     
     internal func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -80,13 +66,20 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             cell = JokeViewCell(style: .Subtitle, reuseIdentifier: JokeViewCell.ID)
         }
         
-        let jokeItem = Response.sharedManager.contentList[indexPath.row]
-        cell?.titleLabel.text = jokeItem.title
-        cell?.ctLabel.text = jokeItem.ct.substringToIndex(jokeItem.ct.endIndex.advancedBy(-4))
-
-        cell?.contentLabel.attributedText = NSAttributedString(string: jokeItem.text, attributes: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType])
-        cell?.contentLabel.numberOfLines = 0
-        cell?.contentLabel.preferredMaxLayoutWidth = CGRectGetWidth(tableView.bounds)
+        do {
+            let jokeItem = LaifuResponse.sharedManager.list[indexPath.row]
+            cell?.titleLabel.text = jokeItem.title
+            cell?.ctLabel.text = ""
+            let htmlContent = jokeItem.content.dataUsingEncoding(NSUTF32StringEncoding, allowLossyConversion: false)
+            if let htmlContent = htmlContent {
+                let attrContent = try NSAttributedString(data: htmlContent, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
+                cell?.contentLabel.attributedText = attrContent
+                cell?.contentLabel.numberOfLines = 0
+                cell?.contentLabel.preferredMaxLayoutWidth = CGRectGetWidth(tableView.bounds)
+            }
+        } catch {
+        }
+        
         return cell!
     }
     
@@ -99,14 +92,10 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             return
         }
         
-        let space = CGFloat(10)
+        let space = CGFloat(20)
         let y = scrollView.contentOffset.y + scrollView.bounds.size.height - scrollView.contentInset.bottom
         //print("y:\(y), height:\(scrollView.contentSize.height), table height:\(self.tableView.frame.height)")
         if y > scrollView.contentSize.height + space {           // 滑到底部
-            ++currentPage
-            if currentPage > Response.sharedManager.allPages {
-                currentPage = 1
-            }
             requestData()
         }
     }
