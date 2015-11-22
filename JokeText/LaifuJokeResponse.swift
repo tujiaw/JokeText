@@ -46,5 +46,9 @@ class LaifuResponse {
             }
         }
     }
+    
+    func clear() {
+        list = [TextJoke]()
+    }
 }
 

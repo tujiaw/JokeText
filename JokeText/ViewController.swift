@@ -16,15 +16,16 @@ class ViewController: UIViewController {
     
     var isLoading = false
     var lastPos = 0
+    var firstSegRow = 0
+    var secondSegRow = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.estimatedRowHeight = 100
+        tableView.estimatedRowHeight = 300
         tableView.rowHeight = UITableViewAutomaticDimension
-        requestData()
         
         self.view.addSubview(tableView)
         self.view.addSubview(segControl)
@@ -47,6 +48,8 @@ class ViewController: UIViewController {
             make.centerX.equalTo(self.view.snp_centerX)
             make.width.equalTo(self.view)
         }
+        
+        requestData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -62,29 +65,59 @@ class ViewController: UIViewController {
     }
     
     func requestData() {
-        self.view.makeToastActivity()
-        let request = LaifuJokeRequest()
         isLoading = true
-        Alamofire.request(.GET, request.url).responseJSON { response in
-            if response.result.isSuccess {
-                if let value = response.result.value {
-                    LaifuResponse.sharedManager.setData(value)
-                    self.tableView.reloadData()
-                }
-            }
+        self.view.makeToastActivity()
+        let loadFinishedHandle = {()->Void in
             self.isLoading = false
             self.view.hideToastActivity()
+        }
+        
+        if segControl.selectedSegmentIndex == 0 {
+            let request = LaifuJokeRequest()
+            Alamofire.request(.GET, request.url).responseJSON { response in
+                if response.result.isSuccess {
+                    if let value = response.result.value {
+                        LaifuResponse.sharedManager.setData(value)
+                        self.tableView.reloadData()
+                    }
+                }
+                loadFinishedHandle()
+            }
+        } else if segControl.selectedSegmentIndex == 1 {
+            let request = ImageJokeRequest()
+            Alamofire.request(.GET, request.url).responseJSON { response in
+                if response.result.isSuccess {
+                    if let value = response.result.value {
+                        ImageJokeResponse.sharedManager.setData(value)
+                        self.tableView.reloadData()
+                    }
+                    loadFinishedHandle()
+                }
+            }
         }
     }
     
     func segmentValueChanged(sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            print("1111")
-        case 1:
-            print("22222")
-        default:
-            print("3333")
+        if segControl.selectedSegmentIndex == 0 {
+            if LaifuResponse.sharedManager.list.count == 0 {
+                if self.tableView.numberOfRowsInSection(0) > 0 {
+                    self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: .Top, animated: true)
+                }
+                requestData()
+            } else {
+                self.tableView.reloadData()
+                self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: firstSegRow, inSection: 0), atScrollPosition: .Bottom, animated: true)
+            }
+        } else {
+            if ImageJokeResponse.sharedManager.list.count == 0 {
+                if self.tableView.numberOfRowsInSection(0) > 0 {
+                    self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: .Top, animated: true)
+                }
+                requestData()
+            } else {
+                self.tableView.reloadData()
+                self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: secondSegRow, inSection: 0), atScrollPosition: .Bottom, animated: true)
+            }
         }
     }
 }
@@ -92,34 +125,70 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     internal func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return LaifuResponse.sharedManager.list.count
+        if segControl.selectedSegmentIndex == 0 {
+            return LaifuResponse.sharedManager.list.count
+        } else {
+            return ImageJokeResponse.sharedManager.list.count
+        }
     }
     
     internal func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell = tableView.dequeueReusableCellWithIdentifier(JokeViewCell.ID) as? JokeViewCell
-        if cell == nil {
-            cell = JokeViewCell(style: .Subtitle, reuseIdentifier: JokeViewCell.ID)
-        }
-        
-        do {
-            let jokeItem = LaifuResponse.sharedManager.list[indexPath.row]
-            cell?.titleLabel.text = jokeItem.title
-            cell?.ctLabel.text = ""
-            let htmlContent = jokeItem.content.dataUsingEncoding(NSUTF32StringEncoding, allowLossyConversion: false)
-            if let htmlContent = htmlContent {
-                let attrContent = try NSAttributedString(data: htmlContent, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
-                cell?.contentLabel.attributedText = attrContent
-                cell?.contentLabel.numberOfLines = 0
-                cell?.contentLabel.preferredMaxLayoutWidth = CGRectGetWidth(tableView.bounds)
+        var result: UITableViewCell!
+        if segControl.selectedSegmentIndex == 0 {
+            var cell = tableView.dequeueReusableCellWithIdentifier(JokeViewCell.ID) as? JokeViewCell
+            if cell == nil {
+                cell = JokeViewCell(style: .Subtitle, reuseIdentifier: JokeViewCell.ID)
             }
-        } catch {
+            
+            do {
+                let jokeItem = LaifuResponse.sharedManager.list[indexPath.row]
+                cell?.titleLabel.text = jokeItem.title
+                cell?.ctLabel.text = ""
+                let htmlContent = jokeItem.content.dataUsingEncoding(NSUTF32StringEncoding, allowLossyConversion: false)
+                if let htmlContent = htmlContent {
+                    let attrContent = try NSAttributedString(data: htmlContent, options: [NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType], documentAttributes: nil)
+                    cell?.contentLabel.attributedText = attrContent
+                    cell?.contentLabel.numberOfLines = 0
+                    cell?.contentLabel.preferredMaxLayoutWidth = CGRectGetWidth(tableView.bounds)
+                }
+            } catch {}
+
+            result = cell
+            firstSegRow = indexPath.row
+        } else {
+            var cell = tableView.dequeueReusableCellWithIdentifier(ImageJokeViewCell.ID) as? ImageJokeViewCell
+            if cell == nil {
+                cell = ImageJokeViewCell(style: .Subtitle, reuseIdentifier: ImageJokeViewCell.ID)
+            }
+            
+            if ImageJokeResponse.sharedManager.list.count > indexPath.row {
+                let jokeItem = ImageJokeResponse.sharedManager.list[indexPath.row]
+                cell?.titleLabel.text = jokeItem.title
+                cell?.webView.loadRequest(NSURLRequest(URL: NSURL(string: jokeItem.thumburl)!))
+            }
+            
+            result = cell
+            secondSegRow = indexPath.row
         }
         
-        return cell!
+        return result
     }
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        if segControl.selectedSegmentIndex == 0 {
+            return UITableViewAutomaticDimension
+        } else {
+            if ImageJokeResponse.sharedManager.list.count > indexPath.row {
+                let width = ImageJokeResponse.sharedManager.list[indexPath.row].width
+                let height = ImageJokeResponse.sharedManager.list[indexPath.row].height
+                let scale = CGFloat(width) / self.view.frame.size.width
+                guard width != 0 && height != 0 && scale != 0 else {
+                    return UITableViewAutomaticDimension
+                }
+                return CGFloat(height) / scale + CGFloat(40)
+            }
+            return UITableViewAutomaticDimension
+        }
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -151,10 +220,18 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(tableView: UITableView, canPerformAction action: Selector, forRowAtIndexPath indexPath: NSIndexPath, withSender sender: AnyObject?) -> Bool {
-        return action == Selector("copy:")
+        if segControl.selectedSegmentIndex == 0 {
+            return action == Selector("copy:")
+        } else {
+            return false
+        }
     }
     
     func tableView(tableView: UITableView, shouldShowMenuForRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        return true
+        if segControl.selectedSegmentIndex == 0 {
+            return true
+        } else {
+            return false
+        }
     }
 }

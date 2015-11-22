@@ -12,7 +12,7 @@ import Foundation
 class LaifuJokeRequest : Request {
     var url: String {
         let sign = super.sign([(String, String)](), secret: "c7288cbf5a0941598e3ab326c27f9668")
-        return super.url("https://route.showapi.com/107-32", sign: sign)
+        return super.url("http://route.showapi.com/107-32", sign: sign)
     }
     
     init() {

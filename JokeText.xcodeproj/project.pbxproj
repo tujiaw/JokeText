@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		3E782646E6D95FC256EC06E8 /* Pods_JokeText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D79C67AA82EDA803F7AA537 /* Pods_JokeText.framework */; };
 		9D03C2091BFE161E0086B39F /* HRToast+UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D03C2081BFE161E0086B39F /* HRToast+UIView.swift */; };
+		9D3B5ADC1C0159AD006C6EDA /* ImageJokeRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3B5ADB1C0159AD006C6EDA /* ImageJokeRequest.swift */; };
+		9D3B5ADE1C015CD7006C6EDA /* ImageJokeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3B5ADD1C015CD7006C6EDA /* ImageJokeResponse.swift */; };
+		9D3B5AE01C015E84006C6EDA /* ImageJokeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D3B5ADF1C015E84006C6EDA /* ImageJokeViewCell.swift */; };
 		9D5F1AB81BFCBF1800115A13 /* LaifuJokeRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5F1AB71BFCBF1800115A13 /* LaifuJokeRequest.swift */; };
 		9D5F1ABA1BFCBFB300115A13 /* LaifuJokeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5F1AB91BFCBFB300115A13 /* LaifuJokeResponse.swift */; };
 		9DA1C33F1BF7185B006D49CD /* JokeViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA1C33E1BF7185B006D49CD /* JokeViewCell.swift */; };
@@ -47,6 +50,9 @@
 /* Begin PBXFileReference section */
 		1D79C67AA82EDA803F7AA537 /* Pods_JokeText.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_JokeText.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D03C2081BFE161E0086B39F /* HRToast+UIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "HRToast+UIView.swift"; sourceTree = "<group>"; };
+		9D3B5ADB1C0159AD006C6EDA /* ImageJokeRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageJokeRequest.swift; sourceTree = "<group>"; };
+		9D3B5ADD1C015CD7006C6EDA /* ImageJokeResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageJokeResponse.swift; sourceTree = "<group>"; };
+		9D3B5ADF1C015E84006C6EDA /* ImageJokeViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageJokeViewCell.swift; sourceTree = "<group>"; };
 		9D5F1AB71BFCBF1800115A13 /* LaifuJokeRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaifuJokeRequest.swift; sourceTree = "<group>"; };
 		9D5F1AB91BFCBFB300115A13 /* LaifuJokeResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaifuJokeResponse.swift; sourceTree = "<group>"; };
 		9DA1C33E1BF7185B006D49CD /* JokeViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JokeViewCell.swift; sourceTree = "<group>"; };
@@ -202,6 +208,8 @@
 				9DA403371BF4C527006230FA /* JokeTextResponse.swift */,
 				9D5F1AB71BFCBF1800115A13 /* LaifuJokeRequest.swift */,
 				9D5F1AB91BFCBFB300115A13 /* LaifuJokeResponse.swift */,
+				9D3B5ADB1C0159AD006C6EDA /* ImageJokeRequest.swift */,
+				9D3B5ADD1C015CD7006C6EDA /* ImageJokeResponse.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -211,6 +219,7 @@
 			children = (
 				9DA1C33E1BF7185B006D49CD /* JokeViewCell.swift */,
 				9D03C2081BFE161E0086B39F /* HRToast+UIView.swift */,
+				9D3B5ADF1C015E84006C6EDA /* ImageJokeViewCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -402,14 +411,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				9DA403321BF4BE62006230FA /* ExtensionString.swift in Sources */,
+				9D3B5AE01C015E84006C6EDA /* ImageJokeViewCell.swift in Sources */,
 				9DA1C33F1BF7185B006D49CD /* JokeViewCell.swift in Sources */,
 				9D5F1AB81BFCBF1800115A13 /* LaifuJokeRequest.swift in Sources */,
 				9DC66EF31BF3672D00BF2C0B /* ViewController.swift in Sources */,
 				9DA403341BF4BE8E006230FA /* ExtensionNSDate.swift in Sources */,
 				9DC66F201BF37F4B00BF2C0B /* Request.swift in Sources */,
+				9D3B5ADC1C0159AD006C6EDA /* ImageJokeRequest.swift in Sources */,
 				9DC66EF11BF3672D00BF2C0B /* AppDelegate.swift in Sources */,
 				9D5F1ABA1BFCBFB300115A13 /* LaifuJokeResponse.swift in Sources */,
 				9DC66F231BF3950400BF2C0B /* JokeTextRequest.swift in Sources */,
+				9D3B5ADE1C015CD7006C6EDA /* ImageJokeResponse.swift in Sources */,
 				9D03C2091BFE161E0086B39F /* HRToast+UIView.swift in Sources */,
 				9DA403381BF4C527006230FA /* JokeTextResponse.swift in Sources */,
 			);

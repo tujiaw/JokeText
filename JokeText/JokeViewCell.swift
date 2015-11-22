@@ -25,7 +25,7 @@ class JokeViewCell : UITableViewCell {
         
         titleLabel.textColor = UIColor.redColor()
         titleLabel.snp_makeConstraints{(make)->Void in
-            make.top.equalTo(self.snp_top).offset(5)
+            make.top.equalTo(self.snp_top).offset(0)
             make.height.equalTo(20)
             make.left.equalTo(self.snp_left).offset(5)
             make.right.equalTo(ctLabel.snp_left).offset(-5)
@@ -33,7 +33,7 @@ class JokeViewCell : UITableViewCell {
         
         ctLabel.textColor = UIColor.blueColor()
         ctLabel.snp_makeConstraints{(make)->Void in
-            make.top.equalTo(self.snp_top).offset(5)
+            make.top.equalTo(self.snp_top).offset(0)
             make.height.equalTo(titleLabel)
             make.left.equalTo(titleLabel.snp_right).offset(5)
             make.width.equalTo(0)
