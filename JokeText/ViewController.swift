@@ -98,26 +98,28 @@ class ViewController: UIViewController {
     }
     
     func segmentValueChanged(sender: UISegmentedControl) {
+        var needRequest = false
         if segControl.selectedSegmentIndex == 0 {
             if LaifuResponse.sharedManager.list.count == 0 {
-                if self.tableView.numberOfRowsInSection(0) > 0 {
-                    self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: .Top, animated: true)
-                }
-                requestData()
+                needRequest = true
             } else {
                 self.tableView.reloadData()
                 self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: firstSegRow, inSection: 0), atScrollPosition: .Bottom, animated: true)
             }
         } else {
             if ImageJokeResponse.sharedManager.list.count == 0 {
-                if self.tableView.numberOfRowsInSection(0) > 0 {
-                    self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: .Top, animated: true)
-                }
-                requestData()
+                needRequest = true
             } else {
                 self.tableView.reloadData()
                 self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: secondSegRow, inSection: 0), atScrollPosition: .Bottom, animated: true)
             }
+        }
+        
+        if needRequest {
+            if self.tableView.numberOfRowsInSection(0) > 0 {
+                self.tableView.scrollToRowAtIndexPath(NSIndexPath(forRow: 0, inSection: 0), atScrollPosition: .Top, animated: true)
+            }
+            requestData()
         }
     }
 }
