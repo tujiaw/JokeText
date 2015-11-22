@@ -11,9 +11,11 @@ import Alamofire
 import SnapKit
 
 class ViewController: UIViewController {
+    let segControl = UISegmentedControl(items: ["文本", "图片"])
+    let tableView = UITableView()
     
-    @IBOutlet weak var tableView: UITableView!
     var isLoading = false
+    var lastPos = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,8 +25,30 @@ class ViewController: UIViewController {
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableViewAutomaticDimension
         requestData()
+        
+        self.view.addSubview(tableView)
+        self.view.addSubview(segControl)
+        
+        segControl.backgroundColor = UIColor.whiteColor()
+        segControl.selectedSegmentIndex = 0
+        segControl.hidden = false
+        segControl.addTarget(self, action: Selector("segmentValueChanged:"), forControlEvents: UIControlEvents.ValueChanged)
+        
+        segControl.snp_makeConstraints{(make)->Void in
+            make.top.equalTo(self.view.snp_top).offset(20)
+            make.height.equalTo(25)
+            make.centerX.equalTo(self.view.snp_centerX)
+            make.width.equalTo(200)
+        }
+        
+        tableView.snp_makeConstraints{(make)->Void in
+            make.top.equalTo(segControl.snp_bottom).offset(5)
+            make.bottom.equalTo(self.view.snp_bottom).offset(0)
+            make.centerX.equalTo(self.view.snp_centerX)
+            make.width.equalTo(self.view)
+        }
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -50,6 +74,17 @@ class ViewController: UIViewController {
             }
             self.isLoading = false
             self.view.hideToastActivity()
+        }
+    }
+    
+    func segmentValueChanged(sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            print("1111")
+        case 1:
+            print("22222")
+        default:
+            print("3333")
         }
     }
 }
@@ -97,6 +132,13 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         //print("y:\(y), height:\(scrollView.contentSize.height), table height:\(self.tableView.frame.height)")
         if y > scrollView.contentSize.height + space {           // 滑到底部
             requestData()
+        }
+        
+        let curPos = Int(scrollView.contentOffset.y)
+        if curPos > 0 && curPos - lastPos > 20 {
+            lastPos = curPos
+        } else if lastPos - curPos > 20 && curPos <= Int(scrollView.contentSize.height - scrollView.bounds.size.height) - 20 {
+            lastPos = curPos
         }
     }
     
