@@ -15,7 +15,6 @@ class ViewController: UIViewController {
     let tableView = UITableView()
     
     var isLoading = false
-    var lastPos = 0
     var firstSegRow = 0
     var secondSegRow = 0
     
@@ -91,8 +90,8 @@ class ViewController: UIViewController {
                         ImageJokeResponse.sharedManager.setData(value)
                         self.tableView.reloadData()
                     }
-                    loadFinishedHandle()
                 }
+                loadFinishedHandle()
             }
         }
     }
@@ -203,13 +202,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         //print("y:\(y), height:\(scrollView.contentSize.height), table height:\(self.tableView.frame.height)")
         if y > scrollView.contentSize.height + space {           // 滑到底部
             requestData()
-        }
-        
-        let curPos = Int(scrollView.contentOffset.y)
-        if curPos > 0 && curPos - lastPos > 20 {
-            lastPos = curPos
-        } else if lastPos - curPos > 20 && curPos <= Int(scrollView.contentSize.height - scrollView.bounds.size.height) - 20 {
-            lastPos = curPos
         }
     }
     
